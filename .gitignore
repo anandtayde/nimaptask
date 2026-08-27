@@ -19,6 +19,7 @@ buildNumber.properties
 .settings/
 .vscode/
 bin/
+x/
 
 # Temporary files & Logs
 *.log
