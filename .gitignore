@@ -1,0 +1,36 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDEs - IntelliJ / Eclipse / VS Code
+.idea/
+*.iml
+*.iws
+.classpath
+.project
+.settings/
+.vscode/
+bin/
+
+# Temporary files & Logs
+*.log
+*.tmp
+debug_customers.html
+after_manage_click.html
+after_mycustomer_click.html
+card_area.html
+debug.html
+screenshots/
+test-output/
+
+# OS specific
+.DS_Store
+Thumbs.db

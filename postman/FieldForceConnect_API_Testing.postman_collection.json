@@ -1,0 +1,165 @@
+{
+    "info": {
+        "name": "FieldForceConnect API Testing - Machine Test",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Login with Valid Credentials",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "pm.test(\"Extract and set auth token variable\", function () {",
+                            "    var jsonData = pm.response.json();",
+                            "    if (jsonData.token || jsonData.data.token) {",
+                            "        var token = jsonData.token || jsonData.data.token;",
+                            "        pm.environment.set(\"auth_token\", token);",
+                            "    }",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"email\": \"{{valid_email}}\",\n    \"password\": \"{{valid_password}}\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/login",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "login"
+                    ]
+                },
+                "description": "Performs login with valid credentials and extracts token to an environment variable."
+            },
+            "response": []
+        },
+        {
+            "name": "2. Login with Invalid Credentials",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 401 or 400\", function () {",
+                            "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 404]);",
+                            "});",
+                            "",
+                            "pm.test(\"Validate error message\", function () {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData.message || jsonData.error).to.not.be.empty;",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"email\": \"invalid_user@test.com\",\n    \"password\": \"WrongPassword123!\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/login",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "login"
+                    ]
+                },
+                "description": "Tests Login API failure mechanisms."
+            },
+            "response": []
+        },
+        {
+            "name": "3. Add Customer",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200 or 201\", function () {",
+                            "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{auth_token}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"TestCustomer Automate\",\n    \"email\": \"testcustomer@api.com\",\n    \"phone\": \"9876543210\",\n    \"address\": \"123 Mumbai, India\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/customers",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "customers"
+                    ]
+                },
+                "description": "Adds a customer from the dashboard using the authentication token generated from the Login step."
+            },
+            "response": []
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "https://test.fieldforceconnect.com",
+            "type": "string"
+        },
+        {
+            "key": "valid_email",
+            "value": "anandtayade2004@gmail.com",
+            "type": "string"
+        },
+        {
+            "key": "valid_password",
+            "value": "Pass@1234",
+            "type": "string"
+        }
+    ]
+}
