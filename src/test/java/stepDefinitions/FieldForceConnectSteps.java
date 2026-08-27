@@ -141,22 +141,45 @@ public class FieldForceConnectSteps {
             List<WebElement> inputs = driver
                     .findElements(By.xpath("//input[not(@type='hidden') and not(@type='file')]"));
             if (inputs.size() > groupIdx * 2) {
-                // If the app uses a specific format or it's a datepicker, JS value set might
-                // work better
                 WebElement dEl = inputs.get(groupIdx * 2);
                 WebElement tEl = inputs.get(groupIdx * 2 + 1);
 
-                ((JavascriptExecutor) driver).executeScript("arguments[0].value = arguments[1];", dEl, date);
-                ((JavascriptExecutor) driver)
-                        .executeScript("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));", dEl);
-                ((JavascriptExecutor) driver)
-                        .executeScript("arguments[0].dispatchEvent(new Event('change', { bubbles: true }));", dEl);
+                // Parse the day from "28-08-2026"
+                String dayToPick = date != null && date.contains("-") ? date.split("-")[0] : "28";
+                if (dayToPick.startsWith("0"))
+                    dayToPick = dayToPick.substring(1); // "05" -> "5"
 
-                ((JavascriptExecutor) driver).executeScript("arguments[0].value = arguments[1];", tEl, time);
-                ((JavascriptExecutor) driver)
-                        .executeScript("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));", tEl);
-                ((JavascriptExecutor) driver)
-                        .executeScript("arguments[0].dispatchEvent(new Event('change', { bubbles: true }));", tEl);
+                // 1. Click Date Picker
+                dEl.click();
+                Thread.sleep(1000);
+
+                // Select the day in the calendar (it pops up in a dialog or popover)
+                try {
+                    WebElement dayBtn = driver.findElement(By.xpath(
+                            "//div[contains(@class, 'MuiPickersPopper') or @role='dialog' or @role='presentation']//button[text()='"
+                                    + dayToPick + "']"));
+                    dayBtn.click();
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    System.out.println("Could not click day " + dayToPick + " in date picker.");
+                    // forcefully close it if it stays open by hitting ESC
+                    dEl.sendKeys(Keys.ESCAPE);
+                }
+
+                // 2. Click Time Picker
+                tEl.click();
+                Thread.sleep(1000);
+
+                // Click 'Done' in the time picker
+                try {
+                    WebElement doneBtn = driver.findElement(By.xpath(
+                            "//div[contains(@class, 'MuiPickersPopper') or @role='dialog' or @role='presentation']//button[contains(text(),'Done') or contains(text(),'OK')]"));
+                    doneBtn.click();
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    System.out.println("Could not click Done in time picker.");
+                    tEl.sendKeys(Keys.ESCAPE);
+                }
             }
         } catch (Exception e) {
             System.out.println("Could not fill Date/Time: " + e.getMessage());
