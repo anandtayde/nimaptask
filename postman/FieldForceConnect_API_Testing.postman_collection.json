@@ -143,23 +143,47 @@
                 "description": "Adds a customer from the dashboard using the authentication token generated from the Login step."
             },
             "response": []
-        }
-    ],
-    "variable": [
-        {
-            "key": "base_url",
-            "value": "https://test.fieldforceconnect.com",
-            "type": "string"
         },
         {
-            "key": "valid_email",
-            "value": "anandtayade2004@gmail.com",
-            "type": "string"
-        },
-        {
-            "key": "valid_password",
-            "value": "Pass@1234",
-            "type": "string"
+            "name": "4. Get Customer List",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{auth_token}}"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/customers",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "customers"
+                    ]
+                },
+                "description": "Fetches the list of customers added to the dashboard, fulfilling the GET request test criteria."
+            },
+            "response": []
         }
     ]
 }
